@@ -1,17 +1,17 @@
 /*
-**    pixelserv.c
-**    http://www.linuxquestions.org/questions/programming-9/pixelserv-with-xinetd-763702/
-**         
-**    build: make pixelserv
-**    run:   pixelserv
+**    nullserv.c - inetd server for spitting out null content. Integrate to DNS
+**                 to provide advert blocking on a LAN.
+**    
+**    build: make nullserv
+**    run:   Add something like the following to /etc/inetd.conf
+**
+**    www  stream  tcp  nowait  nobody  /usr/sbin/tcpd  /usr/local/bin/nullserv
+**
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-
-#define PROTOCOL ""
-#define TOKEN_SIZE 4096
 
 static const unsigned char null_gif[] = {
   0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0xf0, 0x00, 
@@ -157,15 +157,13 @@ void send_headers(char* mime, int length)
 }
 
 int main( int argc, char * argv[] ){
-    char buf[TOKEN_SIZE];
+    char buf[4096];
     char* method;
     char* path;
     char* protocol;
     char* querystring;
     char* subpath;    
     char* ext;     
-    char* mime_type;       
-    int i;
 
     if (!fgets(buf, sizeof(buf), stdin)) return -1;
 
@@ -185,13 +183,15 @@ int main( int argc, char * argv[] ){
     subpath = strtok(path, "?");
     ext = strrchr(subpath, '.');    
            
-    /*printf("Method   : %s\r\n", method);    
+    /*
+    printf("Method   : %s\r\n", method);    
     printf("Path     : %s\r\n", path);    
     printf("Protocol : %s\r\n", protocol);            
     printf("Query    : %s\r\n", querystring);                
     printf("Subpath  : %s\r\n", subpath);                    
     printf("Ext      : %s\r\n", ext);               
-    exit(0);*/
+    exit(0);
+    */
         
     // This is really crude. 
     if (strcasecmp(ext, ".htm") == 0 || strcasecmp(ext, ".html") == 0) 
@@ -253,7 +253,7 @@ int main( int argc, char * argv[] ){
     if (strcasecmp(ext, ".gif") == 0) 
     {
         send_headers("image/gif", (sizeof null_gif -1));
-        fwrite (null_gif, 1, (sizeof null_gif - 1), stdout );            
+        fwrite (null_gif, 1, (sizeof null_gif - 1), stdout );                 
         return 0;
     }        
     
