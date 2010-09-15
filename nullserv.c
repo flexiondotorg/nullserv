@@ -191,9 +191,6 @@ int main(int argc, char * argv[]) {
     path = strtok(NULL, " ");
     protocol = strtok(NULL, "\r");
  
-    // Stop if the request is incomplete
-    //if (!method || !path || !protocol) return -1;
-
     // Parse querystring if there is one.
     querystring = strstr(path, "?");
     if (querystring)
