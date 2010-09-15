@@ -1,9 +1,9 @@
 /*
-**    nullserv.c - inetd server for spitting out null content. Integrate to DNS
-**                 to provide advert blocking on a LAN.
+**    nullserv.c - inetd service for spitting out null content. Integrate it 
+**                 with DNS to provide advert blocking on a LAN.
 **    
-**    build: make nullserv
-**    run:   Add something like the following to /etc/inetd.conf
+**    build: make nullserv && strip nullserv
+**    run:   Add something like the following to /etc/inetd.conf and restart inetd.
 **
 **    www  stream  tcp  nowait  nobody  /usr/sbin/tcpd  /usr/local/bin/nullserv
 **
@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+
+#define DEFAULT_MIMETYPE "image/gif"
 
 static const unsigned char null_gif[] = {
   0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0xf0, 0x00, 
@@ -156,6 +158,24 @@ void send_headers(char* mime, int length)
     printf("\r\n");
 }
 
+char* get_mime_type(char* ext)
+{
+    // This is really crude, but also really simple ;-)
+    if (!ext) return DEFAULT_MIMETYPE;
+    if (strcasecmp(ext, ".gif") == 0)                                   return "image/gif";        
+    if (strcasecmp(ext, ".png") == 0)                                   return "image/png";            
+    if (strcasecmp(ext, ".jpg") == 0 || strcasecmp(ext, ".jpeg") == 0)  return "image/jpeg";
+    if (strcasecmp(ext, ".swf") == 0)                                   return "application/x-shockwave-flash";            
+    if (strcasecmp(ext, ".js") == 0 || strcasecmp(ext, ".ajax") == 0)   return "text/javascript";       
+    if (strcasecmp(ext, ".htm") == 0 || strcasecmp(ext, ".html") == 0)  return "text/html";
+    if (strcasecmp(ext, ".css") == 0)                                   return "text/css";        
+    if (strcasecmp(ext, ".php") == 0)                                   return "text/plain";        
+    if (strcasecmp(ext, ".asp") == 0 || strcasecmp(ext, ".aspx") == 0)  return "text/plain";    
+    if (strcasecmp(ext, ".cgi") == 0 || strcasecmp(ext, ".pl") == 0)    return "text/plain";
+    if (strcasecmp(ext, ".txt") == 0)                                   return "text/plain";            
+    return DEFAULT_MIMETYPE;  
+}
+
 int main( int argc, char * argv[] ){
     char buf[4096];
     char* method;
@@ -163,7 +183,8 @@ int main( int argc, char * argv[] ){
     char* protocol;
     char* querystring;
     char* subpath;    
-    char* ext;     
+    char* ext; 
+    char* mime_type;         
 
     if (!fgets(buf, sizeof(buf), stdin)) return -1;
 
@@ -173,7 +194,7 @@ int main( int argc, char * argv[] ){
     protocol = strtok(NULL, "\r");
  
     // Stop if the request is incomplete
-    if (!method || !path || !protocol) return -1;
+    //if (!method || !path || !protocol) return -1;
 
     // Parse querystring if there is one.
     querystring = strstr(path, "?");
@@ -182,7 +203,8 @@ int main( int argc, char * argv[] ){
     
     subpath = strtok(path, "?");
     ext = strrchr(subpath, '.');    
-           
+    mime_type = get_mime_type(ext);               
+    
     /*
     printf("Method   : %s\r\n", method);    
     printf("Path     : %s\r\n", path);    
@@ -190,82 +212,32 @@ int main( int argc, char * argv[] ){
     printf("Query    : %s\r\n", querystring);                
     printf("Subpath  : %s\r\n", subpath);                    
     printf("Ext      : %s\r\n", ext);               
+    printf("MimeType : %s\r\n", mime_type);                   
     exit(0);
-    */
-        
-    // This is really crude. 
-    if (strcasecmp(ext, ".htm") == 0 || strcasecmp(ext, ".html") == 0) 
-    {
-        send_headers("text/html", (sizeof null_text -1));
-        fwrite (null_text, 1, (sizeof null_text - 1), stdout );                    
-        return 0;
+    */          
+                        
+    if ( (mime_type == "text/plain") || (mime_type == "text/html") || (mime_type == "text/css") || (mime_type == "text/javascript") ) {
+        send_headers(mime_type, (sizeof null_text -1));
+        fwrite(null_text, 1, (sizeof null_text - 1), stdout);                
     }
-
-    if (strcasecmp(ext, ".cgi") == 0 || strcasecmp(ext, ".pl") == 0) 
-    {
-        send_headers("text/plain", (sizeof null_text -1));
-        fwrite (null_text, 1, (sizeof null_text - 1), stdout );            
-        return 0;
+    else if (mime_type == "image/gif" ) {
+        send_headers(mime_type, (sizeof null_gif -1));
+        fwrite(null_gif, 1, (sizeof null_gif - 1), stdout);                    
+    }
+    else if (mime_type == "image/png" ) {
+        send_headers(mime_type, (sizeof null_png -1));
+        fwrite(null_png, 1, (sizeof null_png - 1), stdout);                    
     }    
-
-    if (strcasecmp(ext, ".php") == 0)     
-    {
-        send_headers("text/plain", (sizeof null_text -1));
-        fwrite (null_text, 1, (sizeof null_text - 1), stdout );            
-        return 0;
+    else if (mime_type == "image/jpeg" ) {
+        send_headers(mime_type, (sizeof null_jpg -1));
+        fwrite(null_jpg, 1, (sizeof null_jpg - 1), stdout);                    
     }    
-
-    if (strcasecmp(ext, ".asp") == 0 || strcasecmp(ext, ".aspx") == 0)     
-    {
-        send_headers("text/plain", (sizeof null_text -1));
-        fwrite (null_text, 1, (sizeof null_text - 1), stdout );            
-        return 0;
+    else if (mime_type == "application/x-shockwave-flash" ) {
+        send_headers(mime_type, (sizeof null_swf -1));
+        fwrite(null_swf, 1, (sizeof null_swf - 1), stdout);                    
     }    
-  
-    if (strcasecmp(ext, ".js") == 0 || strcasecmp(ext, ".ajax") == 0) 
-    {
-        send_headers("text/javascript", (sizeof null_text -1));
-        fwrite (null_text, 1, (sizeof null_text - 1), stdout );            
-        return 0;
-    }        
-    
-    if (strcasecmp(ext, ".css") == 0)  
-    {
-        send_headers("text/css", (sizeof null_text -1));
-        fwrite (null_text, 1, (sizeof null_text - 1), stdout );            
-        return 0;
-    }            
-
-    if (strcasecmp(ext, ".jpg") == 0 || strcasecmp(ext, ".jpeg") == 0) 
-    {
-        send_headers("image/jpeg", (sizeof null_jpg -1));
-        fwrite (null_jpg, 1, (sizeof null_jpg - 1), stdout );            
-        return 0;
-    }    
-    
-    if (strcasecmp(ext, ".png") == 0) 
-    {
-        send_headers("image/png", (sizeof null_png -1));
-        fwrite (null_png, 1, (sizeof null_png - 1), stdout );            
-        return 0;
-    }        
-
-    if (strcasecmp(ext, ".gif") == 0) 
-    {
-        send_headers("image/gif", (sizeof null_gif -1));
-        fwrite (null_gif, 1, (sizeof null_gif - 1), stdout );                 
-        return 0;
-    }        
-    
-    if (strcasecmp(ext, ".swf") == 0) 
-    {
-        send_headers("application/x-shockwave-flash", (sizeof null_swf -1));
-        fwrite (null_swf, 1, (sizeof null_swf - 1), stdout );            
-        return 0;
-    }            
-
-    //Send null text by default
-    send_headers("text/plain", (sizeof null_text -1));
-    fwrite (null_text, 1, (sizeof null_text - 1), stdout );            
+    else {
+        return -1;
+    }
     return 0;
 }
