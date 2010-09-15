@@ -143,8 +143,7 @@ static const unsigned char null_swf[] = {
 
 static const unsigned char null_text[] = "";
 
-void send_headers(char* mime, int length)
-{
+void send_headers(char* mime, int length) {
     printf("%s %d %s\r\n", "HTTP/1.1", 200, "OK");
     if (mime) {
         printf("Content-Type: %s\r\n", mime);
@@ -158,8 +157,7 @@ void send_headers(char* mime, int length)
     printf("\r\n");
 }
 
-char* get_mime_type(char* ext)
-{
+char* get_mime_type(char* ext) {
     // This is really crude, but also really simple ;-)
     if (!ext) return DEFAULT_MIMETYPE;
     if (strcasecmp(ext, ".gif") == 0)                                   return "image/gif";        
@@ -176,7 +174,7 @@ char* get_mime_type(char* ext)
     return DEFAULT_MIMETYPE;  
 }
 
-int main( int argc, char * argv[] ){
+int main(int argc, char * argv[]) {
     char buf[4096];
     char* method;
     char* path;
@@ -238,6 +236,6 @@ int main( int argc, char * argv[] ){
     }    
     else {
         return -1;
-    }
+    }  
     return 0;
 }
