@@ -82,6 +82,7 @@ References
 
  - http://proxytunnel.sourceforge.net/pixelserv.php
  - http://inetdxtra.sourceforge.net/
+ - http://swfdec.freedesktop.org/
 
 v0.1 2010, 16th September.
  - Initial release
