@@ -1,4 +1,7 @@
-VERSION=0.1
+# Available CFLAGS:
+# -DLOGGING    - log activity
+
+VERSION=0.2
 PREFIX=/usr/local/bin
 CC=gcc
 CFLAGS=-Os -s

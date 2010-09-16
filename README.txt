@@ -84,5 +84,8 @@ References
  - http://inetdxtra.sourceforge.net/
  - http://swfdec.freedesktop.org/
 
+v0.2 2010, ??th September.
+ - Added optional logging.
+
 v0.1 2010, 16th September.
  - Initial release
