@@ -18,7 +18,7 @@ bandwidth :-)
 
 `nullserv` is heavily based on `in.www` which is part of the excellent
 [inetdextra](http://inetdxtra.sourceforge.net/) package. The null `.swf`
-was initial compiled from `swfdec_test_initialize.as` which is part of
+is compiled from `swfdec_test_initialize.as` which is part of
 [swfdec](http://swfdec.freedesktop.org) 0.9.2.
 
 I developed `nullserv` on [Ubuntu](http://www.ubuntu.com) Lucid 10.04 LTS and
