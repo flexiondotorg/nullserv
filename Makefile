@@ -1,11 +1,11 @@
 # Available CFLAGS:
 # -DLOGGING    - log activity
 
-VERSION=0.2
+VERSION=0.3
 PREFIX=/usr/local/bin
 CC=gcc
 CFLAGS=-Os -s
-       
+
 all:
 	$(CC) $(CFLAGS) -o nullserv nullserv.c
 	strip nullserv
