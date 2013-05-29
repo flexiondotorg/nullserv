@@ -33,7 +33,7 @@ deployed it on a NSLU2 running [Debian](http://www.debian.org) Lenny.
 
 Add the following to `/etc/inetd.conf`
 
-    www  stream  tcp  nowait  nobody  /usr/sbin/tcpd  /usr/local/bin/nullserv
+    www  stream  tcp  nowait  nobody  /usr/sbin/tcpd  /usr/bin/nullserv
 
 Restart `inetd.conf`.
 

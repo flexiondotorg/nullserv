@@ -2,7 +2,7 @@
 # -DLOGGING    - log activity
 
 VERSION=0.3
-PREFIX=/usr/local/bin
+PREFIX=/usr/bin
 CC=gcc
 CFLAGS=-Os -s
 
