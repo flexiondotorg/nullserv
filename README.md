@@ -50,16 +50,16 @@ byte response of `Content-Type: text/plain`.
 
 # Changes
 
-## v0.3 2013, 29my May.
+## v0.3 2013, 29th May.
 
   * Merged fixes and improvements contributed by Ben Shadwick.
   * Updated documentation.
 
-## v0.2 2010, ??th September.
+## v0.2 2010, 16th September.
 
   * Added optional logging.
 
-## v0.1 2010, 16th September.
+## v0.1 2010, 15th September.
 
   * Initial release
 
