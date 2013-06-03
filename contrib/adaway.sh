@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
 COUNT=1
-NULLSERV_IP=192\.168\.2\.1
+NULLSERV_IP=192\.168\.2\.3
+# "http://support.it-mate.co.uk/downloads/hosts.txt"
 
 for URL in "http://winhelp2002.mvps.org/hosts.txt" \
     "http://hosts-file.net/ad_servers.txt" \
     "http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext" \
     "http://sysctl.org/cameleon/hosts" \
-    "http://adaway.sufficientlysecure.org/hosts.txt"
+    "http://adaway.sufficientlysecure.org/hosts.txt" \
+    "http://www.malwaredomainlist.com/hostslist/hosts.txt"
 do
     echo "Downloading ${URL}"
     wget -cq --timeout=3 --tries=2 ${URL} -O hosts.${COUNT}
