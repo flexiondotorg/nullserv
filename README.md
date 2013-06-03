@@ -29,7 +29,33 @@ deployed it on a NSLU2 running [Debian](http://www.debian.org) Lenny.
     make
     sudo make install
 
+# Requirements
+
+  * inetd (or similar).
+
 # Usage
+
+Currently, I'm using `dnsmasq` on a [Gargoyle](http://www.gargoyle-router.com/)
+router to redirect ad-server IP addresses to `nullserv` running on an embedded Debian
+Squeeze box. Gargoyle is based on OpenWRT, so this technique should also work with
+OpenWRT.
+
+## Debian Squeeze
+
+Install `git` and the compiler toolchain.
+
+    sudo apt-get install build-essential git-core
+
+Compile and install `nullserv`
+
+    git clone https://github.com/flexiondotorg/nullserv.git
+    cd nullserv
+    make
+    sudo make install
+
+Install OpenBSD inetd.
+
+    sudo apt-get install openbsd-inetd
 
 Add the following to `/etc/inetd.conf`
 
@@ -39,14 +65,32 @@ Restart `inetd.conf`.
 
     sudo /etc/init.d/openbsd-inetd restart
 
-Open a web browser and request anything you like from http://127.0.0.1 or
-whatever the IP address is of the host where `nullserv` is installed. If you
+Open a web browser and request anything you like from http://192.168.2.1 or
+whatever the IP address is the host where `nullserv` is installed. If you
 request a file type that is not recognised by `nullserv` it with send back a 0
 byte response of `Content-Type: text/plain`.
 
-# Requirements
+Run `contrib/adaway.sh` and then `scp` the generated `adaway.txt` to `/etc/` 
+on your Gargoyle/OpenWRT router.
 
-  * inetd (or similar).
+  cd contrib
+  ./adaway.sh
+  scp adaway.txt root@192.168.2.1:/etc/  
+
+## Gargoyle/OpenWRT
+
+Add the following to `/etc/config/dhcp` under the `config dnsmasq` section.
+
+   list addnhosts '/etc/adaway.txt'
+   
+Restart `dnsmasq`
+
+    /etc/init.d/dnsmasq restart
+
+You should now find that ads are blocked and replaced with null content.
+You can do lots more with dnasmasq on Gargoyle/OpenWRT, see the Wiki:
+
+  * <http://wiki.openwrt.org/doc/uci/dhcp>
 
 # Changes
 
