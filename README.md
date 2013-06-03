@@ -65,6 +65,33 @@ Restart `inetd.conf`.
 
     sudo /etc/init.d/openbsd-inetd restart
 
+Some ads are served via https, we can use `stunnel` to forward https 
+connections to `nullserv`.
+
+Install `stunnel`
+
+    sudo apt-get install stunnel
+
+Create SSL certificate and a key.
+
+    sudo openssl req -new -nodes -x509 -out /etc/ssl/certs/stunnel.pem -keyout /etc/ssl/certs/stunnel.pem
+
+Enable the `[https]` section in `/etc/stunnel.conf`, I also disable the `[pop3s]`,
+`[imaps]` and `[ssmtp]` as I don't require them.
+
+    [https]
+    accept  = 443
+    connect = 80
+    TIMEOUTclose = 0
+
+Enable `stunnel` in `/etc/default/stunnel4`. Find `ENABLED` and set it to `1`.
+
+    ENABLED=1
+
+Start `stunnel`.
+
+    sudo /etc/init.d/stunnel4 start
+
 Open a web browser and request anything you like from http://192.168.2.1 or
 whatever the IP address is the host where `nullserv` is installed. If you
 request a file type that is not recognised by `nullserv` it with send back a 0
