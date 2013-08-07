@@ -23,7 +23,7 @@ done
 # Merge, clean and sort the hosts.
 # Replace 127.0.0.1 with the nullserv IP address.
 echo "Merging hosts"
-grep -Ev --no-filename "localhost|google-analytics|www.googleadservices.com" hosts.* | tr '\t' ' ' | sed -e '/^#/d' -e 's/#.*$//' -e 's/  / /g' -e 's/ $//' -e "s/127\.0\.0\.1/${NULLSERV_IP}/" | sort -u > adaway.txt
+grep -Ev --no-filename "localhost|bbc|google-analytics|www.googleadservices.com" hosts.* | tr '\t' ' ' | sed -e '/^#/d' -e 's/#.*$//' -e 's/  / /g' -e 's/ $//' -e "s/127\.0\.0\.1/${NULLSERV_IP}/" | sort -u > adaway.txt
 wc -l adaway.txt
 
 # Clean up
